@@ -1,4 +1,4 @@
-import time
+from .authentication import JWTAuthentication
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
@@ -134,3 +134,17 @@ class LogoutView(APIView):
         response.delete_cookie("refresh_token")
 
         return response
+    
+
+class GetCurrentUser(APIView):
+    authentication_classes = [JWTAuthentication]
+
+    def get(self, request):
+        user =  request.user
+
+        user_data = UserResponseSerializer(user).data
+
+        return Response({
+            "status": "User fetched successfully",
+            "user": user_data
+        }, status=status.HTTP_200_OK)
